@@ -18,12 +18,17 @@ import org.iesalandalus.programacion.alquilervehiculos.modelo.negocio.ficheros.V
 
 public abstract class Modelo {
 
-	protected IClientes clientes;
-	protected IVehiculos vehiculos;
-	protected IAlquileres alquileres;
-	protected IFuenteDatos fuenteDatos;
+	private IClientes clientes;
+	private IVehiculos vehiculos;
+	private IAlquileres alquileres;
+	private IFuenteDatos fuenteDatos;
 
 	protected Modelo(FactoriaFuenteDatos factoriaFuenteDatos) {
+
+		setFuenteDatos(factoriaFuenteDatos.crear());
+		clientes = fuenteDatos.crearClientes();
+		vehiculos = fuenteDatos.crearVehiculos();
+		alquileres = fuenteDatos.crearAlquileres();
 
 	}
 
@@ -48,9 +53,9 @@ public abstract class Modelo {
 
 	public void comenzar() {
 
-		clientes = fuenteDatos.crearClientes();
-		vehiculos = fuenteDatos.crearVehiculos();
-		alquileres = fuenteDatos.crearAlquileres();
+		clientes.comenzar();
+		vehiculos.comenzar();
+		alquileres.comenzar();
 
 	}
 

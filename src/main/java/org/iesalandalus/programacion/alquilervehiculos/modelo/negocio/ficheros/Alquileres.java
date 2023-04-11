@@ -1,23 +1,95 @@
 package org.iesalandalus.programacion.alquilervehiculos.modelo.negocio.ficheros;
 
+import java.io.File;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+
 import javax.naming.OperationNotSupportedException;
+import javax.xml.parsers.DocumentBuilder;
 
 import org.iesalandalus.programacion.alquilervehiculos.modelo.dominio.Alquiler;
 import org.iesalandalus.programacion.alquilervehiculos.modelo.dominio.Cliente;
 import org.iesalandalus.programacion.alquilervehiculos.modelo.dominio.Vehiculo;
 import org.iesalandalus.programacion.alquilervehiculos.modelo.negocio.IAlquileres;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public class Alquileres implements IAlquileres {
+
 	private List<Alquiler> coleccionAlquileres;
+	private static final File FICHERO_ALQUILERES = new File(
+			String.format("%s%s%s%n", "datos", File.separator, "alquileres.xml"));
+	private static final DateTimeFormatter FORMATO_FECHA = null;
+	private static final String RAIZ = "alquileres";
+	private static final String ALQUILER = "alquiler";
+	private static final String CLIENTE = "cliente";
+	private static final String VEHICULO = "vehiculo";
+	private static final String FECHA_ALQUILER = "fechaAlquiler";
+	private static final String FECHA_DEVOLUCION = "fechaDevolucion";
+	private static Alquileres instancia;
 
 	public Alquileres() {
 
 		coleccionAlquileres = new ArrayList<>();
+
+	}
+
+	public void comenzar() {
+
+	}
+
+	private void leerDom(Document documentoXml) {
+
+	}
+
+	private Alquiler getAlquiler(Element elemento) {
+		return null;
+
+	}
+
+	public void terminar() {
+
+		UtilidadesXml.escribirXmlAFichero(crearDom(), FICHERO_ALQUILERES);
+		
+	}
+
+	private Document crearDom() {
+		DocumentBuilder constructor = UtilidadesXml.crearConstructorDocumentoXml();
+		Document documentoXml = null;
+		if (constructor != null) {
+			documentoXml = constructor.newDocument();
+			documentoXml.appendChild(documentoXml.createElement(RAIZ));
+			for(Alquiler alquiler : coleccionAlquileres) {
+				
+				Element elementoAlquileres = getElemento(documentoXml, alquiler);
+				documentoXml.getDocumentElement().appendChild(elementoAlquileres);
+			}
+		}
+		
+		
+		return documentoXml;
+
+	}
+
+	private Element getElemento(Document documentoXml, Alquiler alquiler) {
+		Element elemento = documentoXml.createElement(ALQUILER);
+		elemento.setAttribute(CLIENTE, alquiler.getCliente().getDni());
+		elemento.setAttribute(FECHA_ALQUILER, alquiler.getFechaAlquiler().format(FORMATO_FECHA));
+		elemento.setAttribute(FECHA_DEVOLUCION, alquiler.getFechaDevolucion().format(FORMATO_FECHA));
+		elemento.setAttribute(VEHICULO, alquiler.getVehiculo().getMatricula());
+		return elemento;
+
+	}
+
+	static Alquileres getInstancia() {
+		if (instancia == null) {
+			instancia = new Alquileres();
+		}
+		return instancia;
 
 	}
 
@@ -71,7 +143,7 @@ public class Alquileres implements IAlquileres {
 					throw new OperationNotSupportedException("ERROR: El cliente tiene otro alquiler sin devolver.");
 				} else {
 					if (alquiler.getVehiculo().equals(vehiculo)) {
-						throw new OperationNotSupportedException("ERROR: El turismo está actualmente alquilado.");
+						throw new OperationNotSupportedException("ERROR: El vehículo está actualmente alquilado.");
 					}
 				}
 			} else {
@@ -81,7 +153,7 @@ public class Alquileres implements IAlquileres {
 						throw new OperationNotSupportedException("ERROR: El cliente tiene un alquiler posterior.");
 					} else {
 						if (alquiler.getVehiculo().equals(vehiculo)) {
-							throw new OperationNotSupportedException("ERROR: El turismo tiene un alquiler posterior.");
+							throw new OperationNotSupportedException("ERROR: El vehículo tiene un alquiler posterior.");
 						}
 					}
 				}

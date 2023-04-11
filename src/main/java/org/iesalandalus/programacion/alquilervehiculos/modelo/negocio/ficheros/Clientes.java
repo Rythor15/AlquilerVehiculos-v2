@@ -4,32 +4,37 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.lang.model.element.Element;
 import javax.naming.OperationNotSupportedException;
-import javax.swing.text.Document;
+import javax.xml.parsers.DocumentBuilder;
 
 import org.iesalandalus.programacion.alquilervehiculos.modelo.dominio.Cliente;
 import org.iesalandalus.programacion.alquilervehiculos.modelo.negocio.IClientes;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public class Clientes implements IClientes {
 
-	private List<Cliente> coleccionCliente;
-	private static final File FICHERO_CLIENTES = null;
-	private static final String RAIZ = "";
-	private static final String CLIENTE = "";
-	private static final String NOMBRE = "";
-	private static final String DNI = "";
-	private static final String TELEFONO = "";
+	private List<Cliente> coleccionClientes;
+	private static final File FICHERO_CLIENTES = new File(
+			String.format("%s%s%s%n", "datos", File.separator, "clientes.xml"));
+	private static final String RAIZ = "clientes";
+	private static final String CLIENTE = "cliente";
+	private static final String NOMBRE = "nombre";
+	private static final String DNI = "dni";
+	private static final String TELEFONO = "telefono";
 	private static Clientes instancia;
 
 	private Clientes() {
 
-		coleccionCliente = new ArrayList<>();
+		coleccionClientes = new ArrayList<>();
 
 	}
 
-	protected Clientes getInstancia() {
-		return null;
+	static Clientes getInstancia() {
+		if (instancia == null) {
+			instancia = new Clientes();
+		}
+		return instancia;
 
 	}
 
@@ -47,22 +52,43 @@ public class Clientes implements IClientes {
 	}
 
 	public void terminar() {
+		
+		UtilidadesXml.escribirXmlAFichero(crearDom(), FICHERO_CLIENTES);
 
 	}
 
 	private Document crearDom() {
-		return null;
+		
+		DocumentBuilder constructor = UtilidadesXml.crearConstructorDocumentoXml();
+		Document documentoXml = null;
+		if (constructor != null) {
+			documentoXml = constructor.newDocument();
+			documentoXml.appendChild(documentoXml.createElement(RAIZ));
+			for(Cliente cliente : coleccionClientes) {
+				
+				Element elementoClientes = getElemento(documentoXml, cliente);
+				documentoXml.getDocumentElement().appendChild(elementoClientes);
+			}
+		}
+		
+		
+		return documentoXml;
 
 	}
 
 	private Element getElemento(Document documentoXml, Cliente cliente) {
-		return null;
 
+		Element elemento = documentoXml.createElement(CLIENTE);
+		elemento.setAttribute(DNI, cliente.getDni());
+		elemento.setAttribute(NOMBRE, cliente.getNombre());
+		elemento.setAttribute(TELEFONO, cliente.getTelefono());
+
+		return elemento;
 	}
 
 	@Override
 	public List<Cliente> get() {
-		return new ArrayList<>(coleccionCliente);
+		return new ArrayList<>(coleccionClientes);
 
 	}
 
@@ -71,10 +97,10 @@ public class Clientes implements IClientes {
 		if (cliente == null) {
 			throw new NullPointerException("ERROR: No se puede insertar un cliente nulo.");
 		}
-		if (coleccionCliente.contains(cliente)) {
+		if (coleccionClientes.contains(cliente)) {
 			throw new OperationNotSupportedException("ERROR: Ya existe un cliente con ese DNI.");
 		}
-		coleccionCliente.add(cliente);
+		coleccionClientes.add(cliente);
 	}
 
 	@Override
@@ -82,10 +108,10 @@ public class Clientes implements IClientes {
 		if (cliente == null) {
 			throw new NullPointerException("ERROR: No se puede buscar un cliente nulo.");
 		}
-		int indiceLista = coleccionCliente.indexOf(cliente);
+		int indiceLista = coleccionClientes.indexOf(cliente);
 		Cliente comprobacionCliente;
-		if (coleccionCliente.indexOf(cliente) == 0) {
-			comprobacionCliente = coleccionCliente.get(indiceLista);
+		if (coleccionClientes.indexOf(cliente) == 0) {
+			comprobacionCliente = coleccionClientes.get(indiceLista);
 		} else {
 			comprobacionCliente = null;
 		}
@@ -98,10 +124,10 @@ public class Clientes implements IClientes {
 		if (cliente == null) {
 			throw new NullPointerException("ERROR: No se puede borrar un cliente nulo.");
 		}
-		if (!coleccionCliente.contains(cliente)) {
+		if (!coleccionClientes.contains(cliente)) {
 			throw new OperationNotSupportedException("ERROR: No existe ningún cliente con ese DNI.");
 		} else {
-			coleccionCliente.remove(cliente);
+			coleccionClientes.remove(cliente);
 		}
 	}
 
@@ -111,7 +137,7 @@ public class Clientes implements IClientes {
 		if (cliente == null) {
 			throw new NullPointerException("ERROR: No se puede modificar un cliente nulo.");
 		}
-		if (!coleccionCliente.contains(cliente)) {
+		if (!coleccionClientes.contains(cliente)) {
 			throw new OperationNotSupportedException("ERROR: No existe ningún cliente con ese DNI.");
 		}
 		if (nombre != null && !nombre.isBlank()) {
