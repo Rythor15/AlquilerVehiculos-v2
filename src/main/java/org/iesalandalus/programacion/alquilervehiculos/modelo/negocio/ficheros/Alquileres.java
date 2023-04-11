@@ -54,12 +54,6 @@ public class Alquileres implements IAlquileres {
 	}
 
 	@Override
-	public int getCantidad() {
-		return coleccionAlquileres.size();
-
-	}
-
-	@Override
 	public void insertar(Alquiler alquiler) throws OperationNotSupportedException {
 		if (alquiler == null) {
 			throw new NullPointerException("ERROR: No se puede insertar un alquiler nulo.");
@@ -106,7 +100,7 @@ public class Alquileres implements IAlquileres {
 		if (alquilerDeCliente == null) {
 			throw new OperationNotSupportedException("ERROR: No existe ningún alquiler abierto para ese cliente.");
 		}
-		coleccionAlquileres.get(coleccionAlquileres.indexOf(alquilerDeCliente)).devolver(fechaDevolucion);;
+		coleccionAlquileres.get(coleccionAlquileres.indexOf(alquilerDeCliente)).devolver(fechaDevolucion);
 	}
 
 	private Alquiler getAlquilerAbierto(Cliente cliente) {
@@ -117,10 +111,9 @@ public class Alquileres implements IAlquileres {
 
 			Alquiler alquiler = iterador.next();
 			if (alquiler.getCliente().equals(cliente) && alquiler.getFechaDevolucion() == null) {
-					alquilerAbierto = alquiler;
+				alquilerAbierto = alquiler;
 			}
 		}
-		
 
 		return alquilerAbierto;
 
@@ -139,7 +132,7 @@ public class Alquileres implements IAlquileres {
 		coleccionAlquileres.get(coleccionAlquileres.indexOf(alquilerDeVehiculo)).devolver(fechaDevolucion);
 	}
 
-	private Alquiler getAlquilerAbierto(Vehiculo vehiculo ) {
+	private Alquiler getAlquilerAbierto(Vehiculo vehiculo) {
 
 		Alquiler alquilerAbierto = null;
 		for (Iterator<Alquiler> iterador = coleccionAlquileres.iterator(); iterador.hasNext()
@@ -147,12 +140,12 @@ public class Alquileres implements IAlquileres {
 
 			Alquiler alquiler = iterador.next();
 			if (alquiler.getVehiculo().equals(vehiculo) && alquiler.getFechaDevolucion() == null) {
-					alquilerAbierto = alquiler;
+				alquilerAbierto = alquiler;
 			}
 		}
-		
+
 		return alquilerAbierto;
-		
+
 	}
 
 	@Override

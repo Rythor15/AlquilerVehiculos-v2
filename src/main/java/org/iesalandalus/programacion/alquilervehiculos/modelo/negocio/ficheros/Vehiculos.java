@@ -8,7 +8,6 @@ import javax.naming.OperationNotSupportedException;
 import org.iesalandalus.programacion.alquilervehiculos.modelo.dominio.Vehiculo;
 import org.iesalandalus.programacion.alquilervehiculos.modelo.negocio.IVehiculos;
 
-
 public class Vehiculos implements IVehiculos {
 	private List<Vehiculo> coleccionVehiculos;
 
@@ -21,12 +20,6 @@ public class Vehiculos implements IVehiculos {
 	@Override
 	public List<Vehiculo> get() {
 		return new ArrayList<>(coleccionVehiculos);
-
-	}
-
-	@Override
-	public int getCantidad() {
-		return coleccionVehiculos.size();
 
 	}
 
